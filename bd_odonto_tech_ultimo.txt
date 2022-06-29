@@ -1,0 +1,156 @@
+			CREATE DATABASE odonto_tech
+    WITH
+    OWNER = postgres
+    TEMPLATE = template0
+    ENCODING = 'UTF8'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+	
+CREATE TABLE ESPECIALIDADES
+(
+	id serial,
+	nombre_especialidad  varchar(200),
+	constraint id_esp_pk primary key(id)
+);
+
+
+CREATE TABLE DOCTORES
+(
+   id serial,
+   nombre varchar(200),
+   ci varchar(200),
+   especialidad  varchar(200),
+   celular integer,
+   direccion varchar(350),
+   imagen bytea,
+   id_especialidad bigserial,
+   constraint id_doc_pk primary key (id),
+   constraint id_espec_fk foreign key (id_especialidad) references ESPECIALIDADES(id)
+);
+
+CREATE TABLE PACIENTES
+(
+        ci varchar (200),
+	nombre varchar(200),
+	fecha_inicio date,
+	descripcion varchar(350),
+	celular integer,
+	servicio varchar(200),
+	direccion varchar(350),
+	imagen bytea,
+	constraint ci_pk primary key (ci)
+);
+
+CREATE TABLE SONRISA_DEL_MES
+(
+    id serial,
+    nombre_paciente varchar(200),
+    nombre_doctor varchar(200),
+    imagen bytea,
+    descripcion varchar(350),
+	id_doctor bigserial,
+	ci_paciente varchar(200),
+       estado  varchar(50),
+	constraint id_sonrisa_pk primary key(id),
+	constraint id_doctor_fk foreign key (id_doctor)  references DOCTORES(id),
+	constraint ci_paciente_fk foreign key (ci_paciente) references PACIENTES(ci)
+);
+
+CREATE TABLE HISTORIAL
+(
+	id serial,
+	ci_paciente varchar(200),
+	fecha date,
+	descripcion varchar(350),
+	constraint id_historial_pk primary key (id),
+	constraint ci_p_fk foreign key (ci_paciente) references PACIENTES(ci)
+);
+
+
+CREATE TABLE ALMACEN 
+(
+	id serial,
+	nombre varchar(200),
+	cantidad integer,
+	fecha_venc date,
+	precio_unit numeric(5,2),
+	id_doctor bigserial,
+	constraint  id_almacen primary key (id),
+	constraint id_do_pk foreign key(id_doctor) references DOCTORES(id)
+);
+
+CREATE TABLE TARIFAS 
+(
+	id serial,
+	id_especialidad bigserial,
+	servicio varchar(200),
+	precio numeric(5,2),
+	imagen bytea,
+	nombre_especialidad varchar(200),
+        estado varchar(50),
+         tipo_tarifa varchar(60),
+	constraint id_tarifas_pk primary key (id),
+	constraint id_especia_fk foreign key (id_especialidad) references ESPECIALIDADES(id)
+);
+
+CREATE TABLE NOTICIAS 
+(
+	id serial,
+	titulo varchar(200),
+	contenido varchar(600),
+	imagen bytea,
+	fecha date,
+	id_doctor bigserial,
+        estado varchar(50),
+	constraint id_noticias_pk primary key(id),
+	constraint id_docto_fk foreign  key (id_doctor) references DOCTORES(id)
+);
+
+CREATE TABLE PROMOCIONES
+(
+	id serial,
+	servicio varchar(200),
+	precio numeric(5,2),
+	imagen bytea,
+	id_especialidad bigserial,
+	nombre_especialidad  varchar(200),
+        estado   varchar(50),
+	constraint id_promo primary key(id),
+	constraint id_especial_fk foreign key(id_especialidad) references ESPECIALIDADES(id)
+);
+
+
+CREATE TABLE RESERVA_DE_CITAS
+(
+	id serial,
+	nombre_paciente varchar(200),
+	descripcion_consulta varchar(350),
+	fecha date,
+	hora varchar(50),
+	celular integer,
+	id_especialidad bigserial,
+	nombre_especialidad varchar(200),
+	servicios varchar(200),
+	constraint id_reserva_pk primary key(id),
+	constraint id_especiali_fk foreign key(id_especialidad) references ESPECIALIDADES(id)
+	
+);
+
+CREATE TABLE USUARIOS (
+id serial,
+nombre_doctor  varchar(200),
+usuario  varchar(200),
+password varchar(200),
+correo varchar(200),
+id_doctor bigserial,
+rol varchar(50),
+constraint id_pk_us  primary key(id),
+constraint id_doc_us foreign key (id_doctor) references doctores (id)
+);
+
+
+
+insert into especialidades (nombre_especialidad) values ('Dentista niños');
+insert into doctores (nombre,ci,especialidad,celular,direccion,imagen,id_especialidad) values ('admin','12345678','admin','78945612','Bolivia',null,1);
+insert into usuarios (nombre_doctor,usuario,password,correo,id_doctor,rol) values ('admin','admin','admin','admin@gmail.com',1,'admin');
